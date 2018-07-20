@@ -1,3 +1,9 @@
+# User defined
+.idea/
+*.iml
+target
+target/*
+
 # Compiled class file
 *.class
 
