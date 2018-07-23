@@ -46,9 +46,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.
                 authorizeRequests()
                 .antMatchers("/").permitAll()
-                .antMatchers("/login").permitAll()
-                .antMatchers("/user").permitAll()
-                .antMatchers("/registration").permitAll()
+                .antMatchers("/login").permitAll()          // POST - Login User (user and pass in body)
+                .antMatchers("/reset").permitAll()          // POST - Change User Password (user and pass in body)
+                .antMatchers("/create/user").permitAll()    // POST - New User (data in body)
+                .antMatchers("/users").permitAll()          // GET - All Users
+                .antMatchers("/user").permitAll()           // PUT/GET - Change details of user by ID or email (first, last names, email)
+                .antMatchers("/create/category").permitAll()        // POST - New Category
+                .antMatchers("/categories").permitAll()             // GET - All Categories
+                .antMatchers("/create/course").permitAll()          // POST - New User
+                .antMatchers("/courses").permitAll()                // GET - Courses by Category ID
+                .antMatchers("/course").permitAll()                 // GET - Courses by ID
+                .antMatchers("/create/chapter").permitAll()         // POST - New Chapter
+                .antMatchers("/chapters").permitAll()               // GET - Chapters bu Course ID
+                .antMatchers("/chapter").permitAll()                // GET - Chapters by ID
+                .antMatchers("/create/question").permitAll()        // POST - New Question
+                .antMatchers("/questions").permitAll()              // GET - Questions by Chapter ID
                 .antMatchers("/admin/**").hasAuthority("ADMIN").anyRequest()
                 .authenticated().and().csrf().disable().formLogin()
                 .loginPage("/login").failureUrl("/login?error=true")

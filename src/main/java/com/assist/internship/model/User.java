@@ -14,7 +14,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name="user_id")
-    int user_id;
+    long user_id;
 
     @Column(name = "email")
     String email;

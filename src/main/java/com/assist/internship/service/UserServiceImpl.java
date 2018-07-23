@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 
 @Service
@@ -44,5 +45,15 @@ public class UserServiceImpl implements UserService {
         Role userRole = roleRepository.findByName("ADMIN");
         user.setRoles(new HashSet<>(Collections.singletonList(userRole)));
         userRepository.save(user);
+    }
+    @Override
+    public User findUserById(long id)
+    {
+        return userRepository.findById(id);
+    }
+    @Override
+    public List<User> findAll()
+    {
+        return userRepository.findAll();
     }
 }
