@@ -1,5 +1,6 @@
 package com.assist.internship.model;
 
+import com.assist.internship.helpers.ResponseObject;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -9,7 +10,7 @@ import java.util.Collection;
 @Data
 @Entity
 @Table(name = "course", schema = "public")
-public class Course {
+public class Course implements ResponseObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

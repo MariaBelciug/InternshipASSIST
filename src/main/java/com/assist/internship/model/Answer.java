@@ -1,5 +1,6 @@
 package com.assist.internship.model;
 
+import com.assist.internship.helpers.ResponseObject;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
@@ -8,7 +9,7 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "answer", schema = "public")
-public class Answer {
+public class Answer implements ResponseObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

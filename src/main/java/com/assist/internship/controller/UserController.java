@@ -1,6 +1,7 @@
 package com.assist.internship.controller;
 
 import com.assist.internship.helpers.EmailHelper;
+import com.assist.internship.helpers.InternshipResponse;
 import com.assist.internship.model.User;
 import com.assist.internship.service.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -40,12 +43,12 @@ public class UserController {
             User user = userService.findUserByEmail(email);
 
             if(user!=null) {
-                return ResponseEntity.status(HttpStatus.OK).body(user);
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Success", Arrays.asList(user)));
             } else {
-                return ResponseEntity.status(HttpStatus.OK).body("The provided email address doesn't belong to any existing accounts.");
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing accounts.", null));
             }
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please provide a valid email address.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new InternshipResponse(false, "Please provide a valid email address.", null));
         }
     }
 
@@ -60,16 +63,16 @@ public class UserController {
                 newUser.setLastName(user.getLastName());
                 newUser.setEmail(user.getEmail());
                 userService.saveUser(newUser);
-                return ResponseEntity.status(HttpStatus.OK).body(newUser);
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Success", Arrays.asList(newUser)));
             }
             else
             {
-                return ResponseEntity.status(HttpStatus.OK).body("The provided id doesn't belong to any existing accounts.");
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided id doesn't belong to any existing accounts.", null));
             }
         }
         else
         {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please provide a valid id.");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new InternshipResponse(false, "Please provide a valid id.", null));
         }
     }
 
@@ -96,24 +99,24 @@ public class UserController {
         {
             if (!EmailHelper.emailIsValid(email))
             {
-                return ResponseEntity.status(HttpStatus.OK).body("The supplied email address is not valid!");
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The supplied email address is not valid!", null));
             }
             else
             {
                 if (dbUser != null)
                 {
-                    return ResponseEntity.status(HttpStatus.OK).body("The selected email already belongs to an account. Please use a different one!");
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The selected email already belongs to an account. Please use a different one!", null));
                 }
                 else
                 {
                     userService.saveUser(user);
-                    return ResponseEntity.status(HttpStatus.OK).body("User [" + user.getEmail() + "] created successfully!");
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "User [" + user.getEmail() + "] created successfully!", Arrays.asList(user)));
                 }
             }
         }
         else
         {
-            return ResponseEntity.status(HttpStatus.OK).body("Please fill in all the mandatory fields to successfully create the user!");
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Please fill in all the mandatory fields to successfully create the user!", null));
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.assist.internship.model;
 
+import com.assist.internship.helpers.ResponseObject;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -9,7 +10,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "user", schema = "public")
-public class User {
+public class User implements ResponseObject {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
