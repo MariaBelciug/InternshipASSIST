@@ -22,6 +22,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
+    @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
+    public ResponseEntity handle() {
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     /*@RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity login(@RequestBody User user)
     {
