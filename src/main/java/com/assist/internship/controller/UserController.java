@@ -9,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -21,10 +20,6 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
 
     @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
     public ResponseEntity handle() {
@@ -38,7 +33,7 @@ public class UserController {
         String setToken = RandomStringUtils.randomAlphabetic(6);
         if(oldUser!=null)
         {
-            if(bCryptPasswordEncoder.matches(user.getPassword(), oldUser.getPassword()))
+            if(user.getPassword().equals(oldUser.getPassword()))
             {
                 oldUser.setResetToken(setToken);
                 userService.saveUser(oldUser);
@@ -178,7 +173,7 @@ public class UserController {
             User oldUser = userService.findUserByResetToken(token);
             if(oldUser != null)
             {
-                oldUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+                oldUser.setPassword(user.getPassword());
                 userService.saveUser(oldUser);
                 return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Password Changed!", null));
             }
