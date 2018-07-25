@@ -2,7 +2,6 @@ package com.assist.internship.model;
 
 import com.assist.internship.helpers.ResponseObject;
 import lombok.Data;
-import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -27,7 +26,6 @@ public class User implements ResponseObject {
     String lastName;
 
     @Column(name = "password")
-    @Length(min = 5, message = "*Your password must have at least 5 characters")
     String password;
 
     @Column(name = "active")
