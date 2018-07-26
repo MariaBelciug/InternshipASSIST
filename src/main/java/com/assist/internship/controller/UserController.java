@@ -27,33 +27,26 @@ public class UserController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestBody User user, @RequestHeader("reset_token") final String token)
+    public ResponseEntity login(@RequestBody User user)
     {
-        if(token.isEmpty() || token == null)
+        User oldUser = userService.findUserByEmail(user.getEmail());
+        String setToken = RandomStringUtils.randomAlphabetic(6);
+        if(oldUser!=null)
         {
-            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "User is already Logged!", null));
-        }
-        else
-        {
-            User oldUser = userService.findUserByEmail(user.getEmail());
-            String setToken = RandomStringUtils.randomAlphabetic(6);
-            if(oldUser!=null)
+            if(user.getPassword().equals(oldUser.getPassword()))
             {
-                if(user.getPassword().equals(oldUser.getPassword()))
-                {
-                    oldUser.setResetToken(setToken);
-                    userService.saveUser(oldUser);
-                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, oldUser.getResetToken(), Arrays.asList(oldUser)));
-                }
-                else
-                {
-                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
-                }
+                oldUser.setResetToken(setToken);
+                userService.saveUser(oldUser);
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, oldUser.getResetToken(), Arrays.asList(oldUser)));
             }
             else
             {
                 return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
             }
+        }
+        else
+        {
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
         }
     }
 
@@ -169,25 +162,18 @@ public class UserController {
     }
 
     @RequestMapping(value = "/reset", method = RequestMethod.POST)
-    public ResponseEntity resetPassword(@RequestBody User user, @RequestHeader("reset_token") final String token)
+    public ResponseEntity resetPassword(@RequestBody User user)
     {
-        if(token.isEmpty() || token == null)
+        User oldUser = userService.findUserByEmail(user.getEmail());
+        if(oldUser != null)
         {
-            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Access Denied", null));
+            oldUser.setPassword(user.getPassword());
+            userService.saveUser(oldUser);
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Password Changed!", null));
         }
         else
         {
-            User oldUser = userService.findUserByResetToken(token);
-            if(oldUser != null)
-            {
-                oldUser.setPassword(user.getPassword());
-                userService.saveUser(oldUser);
-                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Password Changed!", null));
-            }
-            else
-            {
-                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
-            }
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
         }
     }
 
