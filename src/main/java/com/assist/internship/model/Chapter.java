@@ -31,15 +31,7 @@ public class Chapter implements ResponseObject {
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="COURSE_ID", referencedColumnName="id")
+    @JoinColumn(name = "course_id", referencedColumnName="id")
     private Course course;
-
-    public Collection<Question> getQuestions() {
-        return questions;
-    }
-
-    public void setQuestions(Collection<Question> questions) {
-        this.questions = questions;
-    }
 
 }

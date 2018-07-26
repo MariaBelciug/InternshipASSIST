@@ -1,11 +1,10 @@
 package com.assist.internship.model;
 
 import com.assist.internship.helpers.ResponseObject;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
 
 @Data
 @Entity
@@ -31,14 +30,8 @@ public class Course implements ResponseObject {
     @Column(name = "images")
     private String images;
 
-    @OneToMany(mappedBy = "course", cascade=CascadeType.ALL)
-    private Collection<Chapter> chapters = new ArrayList<>();
-
-    public Collection<Chapter> getChapters() {
-        return chapters;
-    }
-
-    public void setChapters(Collection<Chapter> chapters) {
-        this.chapters = chapters;
-    }
+    @JsonIgnore
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "category_id", referencedColumnName="id")
+    private Category category;
 }

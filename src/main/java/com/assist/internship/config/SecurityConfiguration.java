@@ -8,17 +8,18 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.sql.DataSource;
+
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+//    @Autowired
+//    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     private DataSource dataSource;
@@ -36,14 +37,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 jdbcAuthentication()
                 .usersByUsernameQuery(usersQuery)
                 .authoritiesByUsernameQuery(rolesQuery)
-                .dataSource(dataSource)
-                .passwordEncoder(bCryptPasswordEncoder);
+                .dataSource(dataSource);
+//                .passwordEncoder(bCryptPasswordEncoder);
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.
+     /*   http.
                 authorizeRequests()
                 .antMatchers("/").permitAll()
                 .antMatchers("/login").permitAll()          // POST - Login User (user and pass in body)
@@ -70,7 +71,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and().logout()
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 .logoutSuccessUrl("/").and().exceptionHandling()
-                .accessDeniedPage("/access-denied");
+                .accessDeniedPage("/access-denied");*/
+
+        http.authorizeRequests()
+                .antMatchers(POST, "/login").permitAll()
+                .antMatchers(POST, "/logout").permitAll()
+                .antMatchers(POST, "/create/user").permitAll()
+                .antMatchers(GET, "/users").permitAll()
+                .antMatchers(GET, "/user").permitAll()
+                //.antMatchers(GET, "/login").permitAll()   //.hasAuthority("ROLE_ADMIN")
+                .anyRequest().fullyAuthenticated() //add for default logout
+                .and().httpBasic()
+                .and().logout().disable()
+                .csrf().disable();
+
     }
 
     @Override

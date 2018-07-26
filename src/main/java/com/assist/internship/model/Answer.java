@@ -24,8 +24,6 @@ public class Answer implements ResponseObject {
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "QUESTION_ID", referencedColumnName="id")
+    @JoinColumn(name = "question_id", referencedColumnName="id")
     private Question question;
-
-
 }
