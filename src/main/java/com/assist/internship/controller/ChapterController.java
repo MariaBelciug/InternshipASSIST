@@ -11,6 +11,7 @@ import com.assist.internship.service.ChapterService;
 
 import java.util.Collection;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 public class ChapterController {
 
