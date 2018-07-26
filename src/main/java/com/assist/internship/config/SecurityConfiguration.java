@@ -86,6 +86,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(GET, "/categories").permitAll()
                 .antMatchers(POST, "/create/category").permitAll()
                 //.antMatchers(GET, "/login").permitAll()   //.hasAuthority("ROLE_ADMIN")
+                .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()//allow CORS option calls
+                .antMatchers("/resources/**").permitAll()
                 .anyRequest().fullyAuthenticated() //add for default logout
                 .and().httpBasic()
                 .and().logout().disable()
