@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.PUT;
 
 @Configuration
 @EnableWebSecurity
@@ -79,6 +80,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(POST, "/create/user").permitAll()
                 .antMatchers(GET, "/users").permitAll()
                 .antMatchers(GET, "/user").permitAll()
+                .antMatchers(PUT, "/user").permitAll()
+                .antMatchers(POST, "/reset").permitAll()
                 //.antMatchers(GET, "/login").permitAll()   //.hasAuthority("ROLE_ADMIN")
                 .anyRequest().fullyAuthenticated() //add for default logout
                 .and().httpBasic()
