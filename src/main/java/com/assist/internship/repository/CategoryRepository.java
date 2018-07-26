@@ -8,6 +8,6 @@ import com.assist.internship.model.Category;
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     //Category findByCategoryId(long category_id);
-    Category findByCategoryName(String categoryName);
+    Category findByName(String categoryName);
 
 }

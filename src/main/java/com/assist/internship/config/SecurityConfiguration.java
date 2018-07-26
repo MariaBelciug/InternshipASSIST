@@ -82,6 +82,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(GET, "/user").permitAll()
                 .antMatchers(PUT, "/user").permitAll()
                 .antMatchers(POST, "/reset").permitAll()
+                .antMatchers(GET, "/categories").permitAll()
+                .antMatchers(POST, "/create/category").permitAll()
                 //.antMatchers(GET, "/login").permitAll()   //.hasAuthority("ROLE_ADMIN")
                 .anyRequest().fullyAuthenticated() //add for default logout
                 .and().httpBasic()
