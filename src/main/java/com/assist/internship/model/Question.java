@@ -12,7 +12,8 @@ import java.util.Collection;
 @Data
 @Entity
 @Table(name = "question", schema = "public")
-public class Question implements ResponseObject {
+public class Question implements ResponseObject
+{
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -30,14 +31,7 @@ public class Question implements ResponseObject {
 
     @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="CHAPTER_ID", referencedColumnName="id")
+    @JoinColumn(name = "chapter_id", referencedColumnName="id")
     private Chapter chapter;
 
-    public Collection<Answer> getQuestions() {
-        return answers;
-    }
-
-    public void setQuestions(Collection<Answer> answers) {
-        this.answers = answers;
-    }
-}
+ }

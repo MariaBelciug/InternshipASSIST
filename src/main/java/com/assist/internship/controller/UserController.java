@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+// import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -22,36 +22,39 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-
     @RequestMapping(value = "/**", method = RequestMethod.OPTIONS)
     public ResponseEntity handle() {
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestBody User user)
+    public ResponseEntity login(@RequestBody User user, @RequestHeader("reset_token") final String token)
     {
-        User oldUser = userService.findUserByEmail(user.getEmail());
-        String setToken = RandomStringUtils.randomAlphabetic(6);
-        if(oldUser!=null)
+        if(token.isEmpty() || token == null)
         {
-            if(bCryptPasswordEncoder.matches(user.getPassword(), oldUser.getPassword()))
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "User is already Logged!", null));
+        }
+        else
+        {
+            User oldUser = userService.findUserByEmail(user.getEmail());
+            String setToken = RandomStringUtils.randomAlphabetic(6);
+            if(oldUser!=null)
             {
-                oldUser.setResetToken(setToken);
-                userService.saveUser(oldUser);
-                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, oldUser.getResetToken(), Arrays.asList(oldUser)));
+                if(user.getPassword().equals(oldUser.getPassword()))
+                {
+                    oldUser.setResetToken(setToken);
+                    userService.saveUser(oldUser);
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, oldUser.getResetToken(), Arrays.asList(oldUser)));
+                }
+                else
+                {
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
+                }
             }
             else
             {
                 return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
             }
-        }
-        else
-        {
-            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
         }
     }
 
@@ -178,7 +181,7 @@ public class UserController {
             User oldUser = userService.findUserByResetToken(token);
             if(oldUser != null)
             {
-                oldUser.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+                oldUser.setPassword(user.getPassword());
                 userService.saveUser(oldUser);
                 return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Password Changed!", null));
             }
