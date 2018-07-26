@@ -27,26 +27,33 @@ public class UserController {
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity login(@RequestBody User user)
+    public ResponseEntity login(@RequestBody User user, @RequestHeader("reset_token") final String token)
     {
-        User oldUser = userService.findUserByEmail(user.getEmail());
-        String setToken = RandomStringUtils.randomAlphabetic(6);
-        if(oldUser!=null)
+        if(token.isEmpty() || token == null)
         {
-            if(user.getPassword().equals(oldUser.getPassword()))
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "User is already Logged!", null));
+        }
+        else
+        {
+            User oldUser = userService.findUserByEmail(user.getEmail());
+            String setToken = RandomStringUtils.randomAlphabetic(6);
+            if(oldUser!=null)
             {
-                oldUser.setResetToken(setToken);
-                userService.saveUser(oldUser);
-                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, oldUser.getResetToken(), Arrays.asList(oldUser)));
+                if(user.getPassword().equals(oldUser.getPassword()))
+                {
+                    oldUser.setResetToken(setToken);
+                    userService.saveUser(oldUser);
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, oldUser.getResetToken(), Arrays.asList(oldUser)));
+                }
+                else
+                {
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
+                }
             }
             else
             {
                 return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
             }
-        }
-        else
-        {
-            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
         }
     }
 
