@@ -42,24 +42,24 @@ public class CategoryController {
 
         //  POST  /create/category - create a new course category - data sent in the request body
         @RequestMapping(value="create/category", method=RequestMethod.POST)
-        public ResponseEntity createCategory(@RequestBody Category category)
-
+        public ResponseEntity createCategory(@RequestBody Category category,@RequestHeader("reset_token") final String token)
         {
-           Category dbCategory= categoryService.findByCategoryName(category.getName());
+            if (token.isEmpty() || token == null) {
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Access Denied", null));
+            } else {
+                Category dbCategory = categoryService.findByCategoryName(category.getName());
 
 
-          if (dbCategory == null) {
+                if (dbCategory == null) {
 
-              categoryService.saveCategory(category);
-              return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Success", Arrays.asList(category)));
+                    categoryService.saveCategory(category);
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Success", Arrays.asList(category)));
 
-              }
-              else
-                 {
-                     return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Category  exist please create another category", null));
+                } else {
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Category  exist please create another category", null));
 
-           }
+                }
+            }
+
         }
-
-
 }
