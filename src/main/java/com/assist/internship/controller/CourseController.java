@@ -1,6 +1,7 @@
 package com.assist.internship.controller;
 
 import com.assist.internship.helpers.InternshipResponse;
+import com.assist.internship.helpers.RoleType;
 import com.assist.internship.model.Course;
 import com.assist.internship.model.User;
 import com.assist.internship.service.CategoryService;
@@ -68,30 +69,36 @@ public class CourseController
         }
     }
     @RequestMapping(value = "/create/course", method = RequestMethod.POST)
-    public ResponseEntity createCourse(@RequestHeader("reset_token") final String token, @RequestBody Course course)
-    {
-        if(token.equals("") || token == null)
+    public ResponseEntity createCourse(@RequestHeader("reset_token") final String token, @RequestBody Course course, @RequestParam("category") final int id) {
+
+        User existUser = userService.findUserByResetToken(token);
+
+        if(categoryService.findByCategoryId(id) != null){
+        if (RoleType.isAdmin(existUser)) {
+            if (token.equals("") || token == null) {
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Access Denied", null));
+            } else {
+                User isAdmin = userService.findUserByResetToken(token);
+
+
+                Course oldCourse = courseService.findCourseBySmallDescription(course.getSmallDescription());
+                if (oldCourse == null) {
+                    course.setCategory(categoryService.findByCategoryId(id));
+                    courseService.saveCourse(course);
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Success", Arrays.asList(course)));
+                } else {
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "This Course already exists, please make a new Course", null));
+
+                }
+
+
+            }
+        }else
         {
-            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Access Denied", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "You are not authorized to perform this operation!", null));
         }
-        else
-        {
-            User isAdmin = userService.findUserByResetToken(token);
-
-
-            Course oldCourse = courseService.findCourseBySmallDescription(course.getSmallDescription());
-            if(oldCourse == null)
-            {
-                courseService.saveCourse(course);
-                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Success", Arrays.asList(course)));
-            }
-            else
-            {
-                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "This Course already exists, please make a new Course", null));
-
-            }
-
-
+        }else{
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "No category with ID " + id + " found!", null));
         }
     }
 }

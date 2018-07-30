@@ -6,6 +6,7 @@ import com.assist.internship.model.Chapter;
 import com.assist.internship.model.User;
 import com.assist.internship.repository.ChapterRepository;
 import com.assist.internship.service.ChapterService;
+import com.assist.internship.service.CourseService;
 import com.assist.internship.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,45 +27,67 @@ public class ChapterController {
     @Autowired
     private UserService userService;
 
-
-
+    @Autowired
+    private CourseService courseService;
 
 
     //Create chapter
     @RequestMapping(value = "/create/chapter", method = RequestMethod.POST)
-    public ResponseEntity createNewChapter(@RequestBody Chapter chapter, @RequestHeader("reset_token") final String token) {
+    public ResponseEntity createNewChapter(@RequestBody Chapter chapter, @RequestHeader("reset_token") final String token, @RequestParam("course") final int id) {
 
 
         User user = userService.findUserByResetToken(token);
 
-        Chapter dbChapter = chapterService.findChapterById(chapter.getId());
+        Chapter dbChapter = chapterService.findChapterByTitle(chapter.getTitle());
         String title = chapter.getTitle();
 
-        if(RoleType.isAdmin(user)) {
-            if (token.isEmpty() || token == null) {
-                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Access denied, please login!", null));
-            } else {
-                if (chapter.getTitle() != null) {
-                    if (title.isEmpty()) {
-                        return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The supplied chapter title is not valid!", null));
-                    } else {
-                        if (dbChapter != null) {
-                            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The selected chapter title already belongs to an chapter. Please use a different one!", null));
-                        } else {
-                            chapterRepository.save(chapter);
-                            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Chapter" + "[ " + chapter.getTitle() + " ]" + " created successfully!", null));
+        if (courseService.findCourseById(id) != null)
+        {
+            if (RoleType.isAdmin(user))
+            {
+                if (token.isEmpty() || token == null)
+                {
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Access denied, please login!", null));
+                }
+                else
+                {
+                    if (chapter.getTitle() != null)
+                    {
+                        if (title.isEmpty())
+                        {
+                            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The supplied chapter title is not valid!", null));
+                        }
+                        else
+                        {
+                            if (dbChapter != null)
+                            {
+                                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The selected chapter title already belongs to an chapter. Please use a different one!", null));
+                            }
+                            else
+                            {
+                                chapter.setCourse(courseService.findCourseById(id));
+                                chapterRepository.save(chapter);
+                                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Chapter created successfully!", Arrays.asList(chapter)));
+                            }
                         }
                     }
-                } else {
-                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Please fill in all the mandatory fields to successfully create the chapter!", null));
+                    else
+                    {
+                        return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Please fill in all the mandatory fields to successfully create the chapter!", null));
+                    }
                 }
+            }
+            else
+            {
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "You are not authorized to perform this operation!", null));
             }
         }
         else
         {
-            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "You are not authorized to perform this operation!", null));
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "No category with ID " + id + " found!", null));
         }
     }
+
 
     //show all chapters by course id
     @RequestMapping(value = "/chapters", method = RequestMethod.GET)

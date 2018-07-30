@@ -13,5 +13,5 @@ public interface ChapterService {
 
     public Chapter findChapterById(int id);
 
-
+    public Chapter findChapterByTitle(String title);
 }

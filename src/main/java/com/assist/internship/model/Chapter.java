@@ -17,14 +17,14 @@ public class Chapter implements ResponseObject {
     private int id;
 
     @Column(name = "title")
-    private String title;
+     String title;
 
     @Column(name = "content")
-    private String content;
+     String content;
 
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "course_id", referencedColumnName="id")
-    private Course course;
+     Course course;
 
 }

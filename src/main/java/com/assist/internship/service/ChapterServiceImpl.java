@@ -33,4 +33,9 @@ public class ChapterServiceImpl implements ChapterService{
         return chapterRepository.findById(id);
     }
 
+    @Override
+    public Chapter findChapterByTitle(String title){
+        return chapterRepository.findByTitle(title);
+    }
+
 }
