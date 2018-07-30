@@ -93,6 +93,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(GET, "/chapter").permitAll()
                 .antMatchers(POST, "/create/question").permitAll()
                 .antMatchers(GET, "/questions").permitAll()
+                .antMatchers(PUT, "/category").permitAll()
+                .antMatchers(PUT, "/course").permitAll()
+                .antMatchers(PUT, "/chapter").permitAll()
+                .antMatchers(PUT, "/question").permitAll()
+                .antMatchers(PUT, "/answer").permitAll()
                 //.antMatchers(GET, "/login").permitAll()   //.hasAuthority("ROLE_ADMIN")
                 .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()//allow CORS option calls
                 .antMatchers("/resources/**").permitAll()

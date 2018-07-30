@@ -25,6 +25,33 @@ public class CourseController
     @Autowired
     private UserService userService;
 
+
+    @RequestMapping(value = "/course", method = RequestMethod.PUT)
+    public ResponseEntity update(@RequestBody Course course, @RequestHeader("reset_token") final String token)
+    {
+
+        if(token.isEmpty() || token == null)
+        {
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Access Denied!", null));
+        }
+        else
+        {
+            Course newCourse = courseService.findCourseById(course.getId());
+            if(newCourse != null)
+            {
+                newCourse.setImages(course.getImages());
+                newCourse.setSmallDescription((course.getSmallDescription()));
+                newCourse.setLongDescription(course.getLongDescription());
+                newCourse.setTags(course.getTags());
+                courseService.saveCourse(newCourse);
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Success", Arrays.asList(newCourse)));
+            }
+            else
+            {
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided id doesn't belong to any existing course.", null));
+            }
+        }
+    }
     // /courses?category=4 GET all courses of a specified CATEGORY Id
     @RequestMapping(value = "/courses", method = RequestMethod.GET)
     public ResponseEntity getCourses(@RequestHeader("reset_token") final String token, @RequestParam("category") final int id)

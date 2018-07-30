@@ -22,4 +22,9 @@ public class AnswerServiceImpl implements AnswerService{
     {
         return answerRepository.findByQuestionId(id);
     }
+    @Override
+    public Answer findAnswerById(int id)
+    {
+        return answerRepository.findById(id);
+    }
 }
