@@ -1,30 +1,17 @@
 package com.assist.internship.service;
 
+import com.assist.internship.helpers.ResponseObject;
 import com.assist.internship.model.Chapter;
-import com.assist.internship.repository.ChapterRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-import java.util.Collection;
+import java.util.List;
 
-@Service("chapterService")
-public class ChapterService {
+public interface ChapterService {
 
-    @Autowired
-    private ChapterRepository chapterRepository;
+    public Chapter save(Chapter chapter);
 
-    public Chapter save(Chapter chapter) {
-        return chapterRepository.save(chapter);
-    }
+    public List<ResponseObject> findChapterByCourseId(int idCourse);
 
-    /*public Optional<Chapter> findById(int idChapter) {
-        return chapterRepository.findById(idChapter);
-    }*/
-    public Collection<Chapter> findAll() {
-        return chapterRepository.findAll();
-    }
+    public Chapter findChapterById(int id);
 
-    public Chapter findChapterById(int id) {
-        return chapterRepository.findById(id);
-    }
+
 }

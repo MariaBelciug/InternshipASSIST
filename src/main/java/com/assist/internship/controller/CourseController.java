@@ -77,25 +77,21 @@ public class CourseController
         else
         {
             User isAdmin = userService.findUserByResetToken(token);
-            System.out.println(isAdmin.getRoles() + "==================================");
-            if(isAdmin != null && isAdmin.getRoles().equals("ADMIN"))
-            {
-                Course oldCourse = courseService.findCourseBySmallDescription(course.getSmallDescription());
-                if(oldCourse == null)
-                {
-                    courseService.saveCourse(course);
-                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Success", Arrays.asList(course)));
-                }
-                else
-                {
-                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "This Course already exists, please make a new Course", null));
 
-                }
+
+            Course oldCourse = courseService.findCourseBySmallDescription(course.getSmallDescription());
+            if(oldCourse == null)
+            {
+                courseService.saveCourse(course);
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Success", Arrays.asList(course)));
             }
             else
             {
-                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Access Denied, ADMIN ONLY", null));
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "This Course already exists, please make a new Course", null));
+
             }
+
+
         }
     }
 }
