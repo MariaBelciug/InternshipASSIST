@@ -30,7 +30,7 @@ public class QuestionController {
     private ChapterService chapterService;
 
     //GET   /questions?chapter=4 - get all the questions for a specified chapter id
-    @RequestMapping(value = "/question", method = RequestMethod.GET)
+    @RequestMapping(value = "/questions", method = RequestMethod.GET)
     public ResponseEntity questions (@RequestParam("id")final int id, @RequestHeader("reset_token") final String token){
         if(token!=null) {
 
