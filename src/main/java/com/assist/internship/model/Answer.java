@@ -21,6 +21,14 @@ public class Answer implements ResponseObject {
     @Column(name = "is_correct")
     boolean is_correct;
 
+    public boolean isIs_correct() {
+        return is_correct;
+    }
+
+    public void setIs_correct(boolean is_correct) {
+        this.is_correct = is_correct;
+    }
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id", referencedColumnName="id")
     Question question;

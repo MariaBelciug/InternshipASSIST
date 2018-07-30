@@ -10,5 +10,6 @@ import java.util.List;
 public interface AnswerService {
 
     public void saveAnswer(Answer answer);
+    public Answer findAnswerById(int id);
     List<ResponseObject> findAnswerByQuestionId(int id);
 }

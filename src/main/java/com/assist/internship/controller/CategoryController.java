@@ -29,6 +29,30 @@ public class CategoryController {
 
     //GET   /categories - get all the course categories:OK
 
+    @RequestMapping(value = "/category", method = RequestMethod.PUT)
+    public ResponseEntity update(@RequestBody Category category, @RequestHeader("reset_token") final String token)
+    {
+
+        if(token.isEmpty() || token == null)
+        {
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Access Denied!", null));
+        }
+        else
+        {
+            Category newCategory = categoryService.findByCategoryId(category.getId());
+            if(newCategory != null)
+            {
+                newCategory.setName(category.getName());
+                categoryService.save(newCategory);
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Success", Arrays.asList(newCategory)));
+            }
+            else
+            {
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided id doesn't belong to any existing category.", null));
+            }
+        }
+    }
+
     @RequestMapping(value = "/categories", method = RequestMethod.GET)
     public ResponseEntity getCategories(@RequestHeader("reset_token") final String token)
     {

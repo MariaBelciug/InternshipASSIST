@@ -31,6 +31,30 @@ public class ChapterController {
     private CourseService courseService;
 
 
+    @RequestMapping(value = "/chapter", method = RequestMethod.PUT)
+    public ResponseEntity update(@RequestBody Chapter chapter, @RequestHeader("reset_token") final String token)
+    {
+
+        if(token.isEmpty() || token == null)
+        {
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Access Denied!", null));
+        }
+        else
+        {
+            Chapter newChapter = chapterService.findChapterById(chapter.getId());
+            if(newChapter != null)
+            {
+                newChapter.setContent((chapter.getContent()));
+                newChapter.setTitle(chapter.getTitle());
+                chapterService.save(newChapter);
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Success", Arrays.asList(newChapter)));
+            }
+            else
+            {
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided id doesn't belong to any existing chapter.", null));
+            }
+        }
+    }
     //Create chapter
     @RequestMapping(value = "/create/chapter", method = RequestMethod.POST)
     public ResponseEntity createNewChapter(@RequestBody Chapter chapter, @RequestHeader("reset_token") final String token, @RequestParam("course") final int id) {

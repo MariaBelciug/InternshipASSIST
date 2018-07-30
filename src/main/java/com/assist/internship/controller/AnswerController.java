@@ -27,6 +27,30 @@ public class AnswerController {
     @Autowired
     private UserService userService;
 
+    @RequestMapping(value = "/answer", method = RequestMethod.PUT)
+    public ResponseEntity update(@RequestBody Answer answer, @RequestHeader("reset_token") final String token)
+    {
+
+        if(token.isEmpty() || token == null)
+        {
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Access Denied!", null));
+        }
+        else
+        {
+            Answer newAnswer = answerService.findAnswerById(answer.getId());
+            if(newAnswer != null)
+            {
+                newAnswer.setContent((answer.getContent()));
+                newAnswer.setIs_correct(answer.isIs_correct());
+                answerService.saveAnswer(newAnswer);
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Success", Arrays.asList(newAnswer)));
+            }
+            else
+            {
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided id doesn't belong to any existing answer.", null));
+            }
+        }
+    }
     @RequestMapping(value = "/answer", method = RequestMethod.GET)
     public ResponseEntity getAnswer(@RequestParam("question")final int id,@RequestHeader("reset_token") final String token){
         if(token!=null) {

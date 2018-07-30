@@ -45,6 +45,30 @@ public class QuestionController {
 
 
 
+    @RequestMapping(value = "/question", method = RequestMethod.PUT)
+    public ResponseEntity update(@RequestBody Question question, @RequestHeader("reset_token") final String token)
+    {
+
+        if(token.isEmpty() || token == null)
+        {
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Access Denied!", null));
+        }
+        else
+        {
+            Question newQuestion = questionService.findQuestionById(question.getId());
+            if(newQuestion != null)
+            {
+                newQuestion.setContent((question.getContent()));
+                newQuestion.setName(question.getName());
+                questionService.saveQuestion(newQuestion);
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Success", Arrays.asList(newQuestion)));
+            }
+            else
+            {
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided id doesn't belong to any existing question.", null));
+            }
+        }
+    }
     //POST  /create/question - create a new question (data in the request body)
     @RequestMapping(value = "/create/question", method = RequestMethod.POST)
     public ResponseEntity createQuestion (@RequestBody Question question, @RequestHeader("reset_token") final String token, @RequestParam("chapter") final int id){
