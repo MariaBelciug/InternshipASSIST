@@ -1,7 +1,6 @@
 package com.assist.internship.model;
 
 import com.assist.internship.helpers.ResponseObject;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -14,24 +13,23 @@ public class Course implements ResponseObject {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
-    private int id;
+    int id;
 
     @Column(name = "small_description")
-    private String small_description;
+    String smallDescription;
 
     @Column(name = "long_description")
-    private String long_description;
+    String longDescription;
 
     //divided by ';'
     @Column(name = "tags")
-    private String tags;
+    String tags;
 
     //divided by ';'
     @Column(name = "images")
-    private String images;
+    String images;
 
-    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id", referencedColumnName="id")
-    private Category category;
+    Category category;
 }

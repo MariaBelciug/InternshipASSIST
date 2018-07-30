@@ -9,7 +9,7 @@ import java.util.List;
 public interface CategoryService {
 
     public Category findByCategoryName(String name);
-     //public Category findByCategoryId(long category_id);
-     public void saveCategory(Category category);
-     public List<Category> findAll();
+    public Category findByCategoryId(int id);
+    public void save(Category category);
+    public List<Category> findAll();
 }

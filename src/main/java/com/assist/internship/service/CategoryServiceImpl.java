@@ -19,21 +19,20 @@ public class CategoryServiceImpl implements CategoryService {
     return categoryRepository.findByName(name);
     }
 
-   /* @Override
-    public Category findByCategoryId(long category_id) {
-        return categoryRepository.findByCategoryId(category_id);
-    }*/
+    @Override
+    public Category findByCategoryId(int id) {
+        return categoryRepository.findById(id);
+    }
 
 
     @Override
-    public void saveCategory(Category category){
+    public void save(Category category){
 
         categoryRepository.save(category);
     }
 
     @Override
-    public List<Category> findAll()
-    {
-        return categoryRepository.findAll();
+    public List<Category> findAll() {
+       return categoryRepository.findAll();
     }
 }

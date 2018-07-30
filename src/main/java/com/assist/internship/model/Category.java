@@ -12,9 +12,9 @@ public class Category implements ResponseObject {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name="id")
-    private int id;
+    int id;
 
     @Column(name="name")
-    private String name;
+    String name;
 
 }

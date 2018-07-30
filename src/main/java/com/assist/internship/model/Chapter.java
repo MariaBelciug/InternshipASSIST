@@ -1,12 +1,9 @@
 package com.assist.internship.model;
 
 import com.assist.internship.helpers.ResponseObject;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
 
 
 @Data
@@ -26,10 +23,6 @@ public class Chapter implements ResponseObject {
     private String content;
 
 
-    @OneToMany(mappedBy = "chapter", cascade=CascadeType.ALL)
-    private Collection<Question> questions = new ArrayList<>();
-
-    @JsonIgnore
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "course_id", referencedColumnName="id")
     private Course course;

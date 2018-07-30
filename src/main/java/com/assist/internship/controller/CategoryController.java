@@ -1,6 +1,7 @@
 package com.assist.internship.controller;
 
 import com.assist.internship.helpers.InternshipResponse;
+import com.assist.internship.helpers.ResponseObject;
 import com.assist.internship.model.Category;
 import com.assist.internship.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,13 +38,18 @@ public class CategoryController {
         }
         else
         {
-            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, categoryService.findAll().toString(), null));
+            List<Category> categories = categoryService.findAll();
+            List<ResponseObject> lista =  new ArrayList<ResponseObject>();
+            lista.addAll(categories);
+
+
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Found!", lista));
         }
     }
 
         //  POST  /create/category - create a new course category - data sent in the request body
         @RequestMapping(value="create/category", method=RequestMethod.POST)
-        public ResponseEntity createCategory(@RequestBody Category category,@RequestHeader("reset_token") final String token)
+        public ResponseEntity createCategory(@RequestBody Category category, @RequestHeader("reset_token") final String token)
         {
             if (token.isEmpty() || token == null) {
                 return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Access Denied", null));
@@ -52,7 +59,7 @@ public class CategoryController {
 
                 if (dbCategory == null) {
 
-                    categoryService.saveCategory(category);
+                    categoryService.save(category);
                     return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "Success", Arrays.asList(category)));
 
                 } else {
