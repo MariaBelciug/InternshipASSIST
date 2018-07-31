@@ -1,5 +1,6 @@
 package com.assist.internship.config;
 
+import org.hibernate.sql.Delete;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -12,9 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 import javax.sql.DataSource;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
-import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
@@ -98,6 +97,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(PUT, "/chapter").permitAll()
                 .antMatchers(PUT, "/question").permitAll()
                 .antMatchers(PUT, "/answer").permitAll()
+                .antMatchers(DELETE, "/user").permitAll()
                 //.antMatchers(GET, "/login").permitAll()   //.hasAuthority("ROLE_ADMIN")
                 .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()//allow CORS option calls
                 .antMatchers("/resources/**").permitAll()

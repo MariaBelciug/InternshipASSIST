@@ -41,11 +41,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void saveUser(User user) {
         user.setPassword(user.getPassword());
-        user.setActive(1);
         Role userRole = roleRepository.findByName("ADMIN");
         user.setRoles(new HashSet<>(Collections.singletonList(userRole)));
         userRepository.save(user);
     }
+
     @Override
     public User findUserById(long id)
     {
@@ -54,11 +54,18 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAll()
     {
+
         return userRepository.findAll();
     }
     @Override
     public User findUserByResetToken(String token)
     {
+
         return userRepository.findByResetToken(token);
+    }
+
+    @Override
+    public User deleteUserByEmail(String email){
+        return userRepository.deleteByEmail(email);
     }
 }

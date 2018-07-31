@@ -28,8 +28,8 @@ public class User implements ResponseObject {
     @Column(name = "password")
     String password;
 
-    @Column(name = "active")
-    int active;
+    @Column(name = "active") //set default value to 1
+    int active = 1;
 
     @Column(name = "reset_token")
     String resetToken;

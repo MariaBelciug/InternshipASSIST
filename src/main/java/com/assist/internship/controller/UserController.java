@@ -2,6 +2,9 @@ package com.assist.internship.controller;
 
 import com.assist.internship.helpers.EmailHelper;
 import com.assist.internship.helpers.InternshipResponse;
+import com.assist.internship.helpers.ResponseObject;
+import com.assist.internship.helpers.RoleType;
+import com.assist.internship.model.Category;
 import com.assist.internship.model.User;
 import com.assist.internship.service.UserService;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -11,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -31,46 +36,23 @@ public class UserController {
     {
         User oldUser = userService.findUserByEmail(user.getEmail());
         String setToken = RandomStringUtils.randomAlphabetic(6);
-        if(oldUser!=null)
-        {
-            if(user.getPassword().equals(oldUser.getPassword()))
-            {
-                oldUser.setResetToken(setToken);
-                userService.saveUser(oldUser);
-                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, oldUser.getResetToken(), Arrays.asList(oldUser)));
-            }
-            else
-            {
+        if(oldUser.getActive() == 1) {
+            if (oldUser != null) {
+                if (user.getPassword().equals(oldUser.getPassword())) {
+                    oldUser.setResetToken(setToken);
+                    userService.saveUser(oldUser);
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, oldUser.getResetToken(), Arrays.asList(oldUser)));
+                } else {
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
+                }
+            } else {
                 return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
             }
-        }
-        else
-        {
-            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
+        }else{
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "User is not active!", null));
         }
     }
 
-    /*@RequestMapping(value = "/logout", method = RequestMethod.POST)
-    public ResponseEntity logout(@RequestBody User user)
-    {   User oldUser = userService.findUserByEmail(user.getEmail());
-        if(oldUser != null)
-        {
-            if(user.getResetToken().equals(oldUser.getResetToken()))
-            {
-                userService.saveUser(oldUser);
-                oldUser.setResetToken("");
-                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, oldUser.getResetToken(), Arrays.asList(oldUser)));
-            }
-            else
-            {
-                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
-            }
-        }
-        else
-        {
-            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email address doesn't belong to any existing account", null));
-        }
-    }*/
 
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     public ResponseEntity logout(@RequestHeader("reset_token") final String token)
@@ -186,7 +168,11 @@ public class UserController {
         }
         else
         {
-            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, userService.findAll().toString(), null));
+            List<User> users = userService.findAll();
+            List<ResponseObject> lista =  new ArrayList<ResponseObject>();
+            lista.addAll(users);
+
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "List of users: ", lista));
         }
     }
 
@@ -221,5 +207,31 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "Please fill in all the mandatory fields to successfully create the user!", null));
         }
     }
+
+    //user delete
+
+    @RequestMapping(value="/user", method = RequestMethod.DELETE)
+    public ResponseEntity delete(@RequestParam("email") final String email, @RequestHeader("reset_token") final String token) {
+
+        User user = userService.findUserByEmail(email);
+        User userAdmin = userService.findUserByResetToken(token);
+
+        if (user.getActive() == 1) {
+            if (RoleType.isAdmin(userAdmin) != null) {
+                if (user != null) {
+                    user.setActive(0);
+                    userService.saveUser(user);
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(true, "User [" + email + "] was deleted successfully!", null));
+                } else {
+                    return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "The provided email doesn't belong to any existing user account.", null));
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "You are not authorized to perform this operation!", null));
+            }
+        }else{
+            return ResponseEntity.status(HttpStatus.OK).body(new InternshipResponse(false, "User is not active!", null));
+        }
+    }
 }
+
 
